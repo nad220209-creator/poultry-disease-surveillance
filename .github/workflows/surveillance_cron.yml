@@ -1,0 +1,29 @@
+name: Automated Poultry Disease Surveillance Cron
+
+on:
+  schedule:
+    - cron: '* * * * *' # Scheduled trigger
+  workflow_dispatch: # Allows manual trigger from GitHub UI anytime
+
+jobs:
+  run-surveillance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          pip install google-genai supabase requests beautifulsoup4
+
+      - name: Run Disease Surveillance Automation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python run_surveillance.py
